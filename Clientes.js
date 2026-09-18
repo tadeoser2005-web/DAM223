@@ -53,3 +53,7 @@ function listarPedidos() {
 consultarProductos()
 console.log(crearPedidos())
 listarPedidos()
+
+function mostrarMenu() {
+
+}
