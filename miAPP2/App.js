@@ -17,7 +17,7 @@ export default function App() {
             nombre="Tadeo "
             carrera="TIID "
             materia="Aplicaciones Móviles "
-            cuatrimestre="4 ">
+            cuatrimestre="5 ">
         </Perfil>
       <StatusBar style="auto" />
     </View>
