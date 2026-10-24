@@ -1,9 +1,12 @@
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View,TextInput} from 'react-native';
 import MenuScreen from "./screen/MenuScreen";
 export default function App() {
     return (
         <View style={styles.container}>
             <MenuScreen/>
+            <TextInput>
+
+            </TextInput>
         </View>
     );
 }
