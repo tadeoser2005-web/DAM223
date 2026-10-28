@@ -1,13 +1,13 @@
-import { StyleSheet, View,TextInput} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import MenuScreen from "./screen/MenuScreen";
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 export default function App() {
     return (
+        <SafeAreaProvider>
         <View style={styles.container}>
             <MenuScreen/>
-            <TextInput>
-
-            </TextInput>
         </View>
+        </SafeAreaProvider>
     );
 }
 
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         flexDirection:'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: 'stretch',
+        justifyContent: 'flex-start',
     },
 });

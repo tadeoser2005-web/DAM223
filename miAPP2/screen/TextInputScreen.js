@@ -1,28 +1,48 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, Platform, StyleSheet } from 'react-native';
+
+
+const mostrarAlerta = (titulo, mensaje) => {
+    if (Platform.OS === 'web') {
+        window.alert(`${titulo}\n\n${mensaje}`);
+    } else {
+        Alert.alert(titulo, mensaje);
+    }
+};
+
 export default function App() {
+
     const [nombre, setNombre] = useState('');
     const [correo, setCorreo] = useState('');
     const [telefono, setTelefono] = useState('');
 
 
     const registrar = () => {
+
         const faltantes = [];
         if (nombre.trim() === '') faltantes.push('Nombre');
         if (correo.trim() === '') faltantes.push('Correo');
         if (telefono.trim() === '') faltantes.push('Teléfono');
+
         if (faltantes.length > 0) {
-            Alert.alert('Faltan datos', 'Completa: ' + faltantes.join(', '));
+            mostrarAlerta('Faltan datos', 'Completa: ' + faltantes.join(', '));
             return;
         }
+
 
         if (!correo.includes('@')) {
-            Alert.alert('Correo inválido', 'El correo debe contener @');
+            mostrarAlerta('Correo inválido', 'El correo debe contener @');
             return;
         }
 
 
-        Alert.alert(
+        if (telefono.length !== 10) {
+            mostrarAlerta('Teléfono inválido', 'Debe tener 10 dígitos');
+            return;
+        }
+
+        // Todo bien
+        mostrarAlerta(
             'Datos registrados',
             `Nombre: ${nombre}\nCorreo: ${correo}\nTeléfono: ${telefono}`
         );
