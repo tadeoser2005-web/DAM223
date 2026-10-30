@@ -12,7 +12,7 @@ export default function PressableScreen() {
             </Text>
             <Switch
                 value={encendido}
-                onValueChange={( ) => setEncendido(valor)}
+                onValueChange={(valor ) => setEncendido(valor)}
             />
             <Text style={styles.texto}>El switch esta: {encendido ? 'Encendido' : 'Apagado'}</Text>
             <Pressable
