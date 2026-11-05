@@ -8,7 +8,7 @@ import {
     Image
 } from 'react-native';
 
-export default function ImageBackgroundScreen() {
+export default function SlapshScreen() {
 
     /* ESTADOS */
 
