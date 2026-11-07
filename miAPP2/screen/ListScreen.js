@@ -76,7 +76,6 @@ function PantallaTareas() {
             <FlatList
                 data={tareas}
                 keyExtractor={(item) => item.id}
-                extraData={seleccionado}
                 renderItem={({ item }) => (
                     <Pressable
                         onPress={() => setSeleccionado(item.id)}
