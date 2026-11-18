@@ -1,112 +1,107 @@
-import {StyleSheet, View, Text, TextInput, Pressable, Image, Button, ImageBackground} from 'react-native';
-import React, {useEffect, useState} from "react";
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Button, Modal, TouchableOpacity } from 'react-native';
 
+const opciones = ['Compartir', 'Editar', 'Eliminar'];
 
 export default function ModalScreen() {
-    const [Titulo,setTitulo] = useState("");
-    const [autor,setAutor] = useState("");
-    const [genero,setGenero] = useState("");
+    const [modal, setModal] = useState(null);
+    const [mensaje, setMensaje] = useState('Selecciona una opción');
 
-    const [showSplash, setShowSplash] = useState(true);
+    const elegirOpcion = (opcion) => {
+        setMensaje(`Opción: ${opcion}`);
+        setModal(null);
+    };
 
-    const bgMain = { uri: 'https://i.blogs.es/fb2535/hello-orange-2/1366_2000.webp' };
-    const logoApp = { uri: 'https://reactnative.dev/img/tiny_logo.png' };
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>Práctica: Modal & Bottom Sheet</Text>
+            <Text style={styles.statusText}>Estado actual: {mensaje}</Text>
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowSplash(false);
-        }, 4000);
-
-        return () => clearTimeout(timer);
-    }, []);
-
-    if (showSplash) {
-        return (
-            <View style={styles.splashBlackBackground}>
-                <View style={styles.transparentCard}>
-                    <Image
-                        source={logoApp}
-                        style={styles.logo}
-                    />
-                    <Text style={styles.splashTitle}>Registro de libros</Text>
-                    <Text style={styles.splashSubtitle}>!Bienvenido!</Text>
-                </View>
+            <View style={styles.buttons}>
+                <Button
+                    title="Abrir Modal (Confirmación)"
+                    onPress={() => setModal('confirmacion')}
+                    color="#1e88e5"
+                />
+                <Button
+                    title="Opciones de Perfil (Bottom Sheet)"
+                    onPress={() => setModal('opciones')}
+                    color="#43a047"
+                />
             </View>
-        );
-    }
 
-  return(
-      <ImageBackground
-          source={bgMain}
-          style={styles.mainContainer}
-          resizeMode="cover"
-      >
-          <View style={styles.mainCard}>
-              <Text style={styles.welcomeText}>¡Bienvenido a tu App!</Text>
-          </View>
-      </ImageBackground>
-    )
-};
+            <Modal
+                visible={modal === 'confirmacion'}
+                animationType="fade"
+                transparent
+                onRequestClose={() => setModal(null)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalCard}>
+                        <Text style={styles.modalTitle}>¿Eliminar elemento?</Text>
+                        <Text style={styles.modalBody}>Esta acción no se puede deshacer.</Text>
+                        <View style={styles.modalActions}>
+                            <Button title="Cancelar" onPress={() => setModal(null)} color="#757575" />
+                            <Button
+                                title="Aceptar"
+                                onPress={() => {
+                                    setMensaje('Elemento eliminado');
+                                    setModal(null);
+                                }}
+                                color="#d32f2f"
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
 
+            <Modal
+                visible={modal === 'opciones'}
+                animationType="slide"
+                transparent
+                onRequestClose={() => setModal(null)}
+            >
+                <TouchableOpacity
+                    style={styles.sheetOverlay}
+                    activeOpacity={1}
+                    onPress={() => setModal(null)}
+                >
+                    <View style={styles.sheet}>
+                        <View style={styles.sheetHandle} />
+                        <Text style={styles.sheetTitle}>Opciones de Perfil</Text>
+                        {opciones.map((opcion) => (
+                            <TouchableOpacity
+                                key={opcion}
+                                style={styles.sheetOption}
+                                onPress={() => elegirOpcion(opcion)}
+                            >
+                                <Text style={[styles.optionText, opcion === 'Eliminar' && styles.deleteText]}>
+                                    {opcion}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+        </View>
+    );
+}
 
 const styles = StyleSheet.create({
-    // SplashScreen: Contenedor negro de fondo completo
-    splashBlackBackground: {
-        width: '100%',
-        flex: 1,
-        backgroundColor: '#000000',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-    },
-
-    // Cuadro transparente
-    transparentCard: {
-        backgroundColor: 'rgba(255, 255, 255, 0.12)',
-        borderWidth: 1,
-        paddingVertical: 35,
-        paddingHorizontal: 20,
-        borderRadius: 20,
-        alignItems: 'center',
-        width: '90%',
-    },
-
-    logo: {
-        width: 80,
-        height: 80,
-        marginBottom: 15,
-        resizeMode: 'contain',
-    },
-    splashTitle: {
-        color: '#FFFFFF',
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 6,
-    },
-    splashSubtitle: {
-        color: '#CCCCCC',
-        fontSize: 14,
-    },
-
-    // Pantalla Principal
-    mainContainer: {
-        width: '100%',
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    mainCard: {
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        padding: 30,
-        borderRadius: 18,
-        alignItems: 'center',
-        width: '80%',
-    },
-    welcomeText: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#333333',
-        marginBottom: 20,
-        textAlign: 'center',
-    },
+    container: { flex: 1, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', padding: 20 },
+    title: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
+    statusText: { fontSize: 14, color: '#666', marginBottom: 30 },
+    buttons: { width: '100%', paddingHorizontal: 20, gap: 15 },
+    modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'center', alignItems: 'center' },
+    modalCard: { width: '80%', backgroundColor: '#fff', borderRadius: 12, padding: 20, elevation: 5 },
+    modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
+    modalBody: { fontSize: 14, color: '#555', marginBottom: 20 },
+    modalActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10 },
+    sheetOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+    sheet: { backgroundColor: '#fff', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, minHeight: '35%' },
+    sheetHandle: { width: 40, height: 5, backgroundColor: '#ccc', borderRadius: 3, alignSelf: 'center', marginBottom: 15 },
+    sheetTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 15 },
+    sheetOption: { paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
+    optionText: { fontSize: 16 },
+    deleteText: { color: '#d32f2f' },
 });
