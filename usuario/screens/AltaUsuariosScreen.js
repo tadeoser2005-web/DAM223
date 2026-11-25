@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import {View,SafeAreaView,Text,TextInput,Pressable,StyleSheet,} from 'react-native';
+import {useLocalSearchParams} from "expo-router";
 
 export default function App() {
+
+  const params = useLocalSearchParams();
+
   const [nombre, setNombre] = useState('');
   const [edad, setEdad] = useState('');
 
