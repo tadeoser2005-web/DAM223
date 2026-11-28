@@ -2,12 +2,48 @@ import React, { useState } from 'react';
 import {View,SafeAreaView,Text,TextInput,Pressable,StyleSheet,} from 'react-native';
 import {useLocalSearchParams} from "expo-router";
 
+//importamos la funcion de rehistarr
+import {registrarUsuarios} from '../Services/usuariosServices';
 export default function App() {
 
   const params = useLocalSearchParams();
 
+  //el estado para la barra de cargando
+  const [cargando,setCargando] = useState(false);
+
+  //estado para mostrar mensaje
+  const [mensaje,setMensaje] = useState('');
+
+  //para indicar el tipo de mensaje
+  const [tipoMensaje,setTipoMensaje] = useState('');
+
+
+
   const [nombre, setNombre] = useState('');
   const [edad, setEdad] = useState('');
+
+  const handleRegistrar = async () => {
+    //activamos el estado de carga y limpiamos mensajes anteriores
+    setCargando(true);
+    setMensaje('');
+    setTipoMensaje('')
+    try {
+      const usuario = {
+        nombre:nombre,
+        edad:edad,
+      };
+      const resultado = await registrarUsuarios(usuario);
+      setMensaje('Usuario registrado correctamente');
+      setTipoMensaje('exito');
+      setEdad('');
+      setNombre('');
+    } catch (error) {
+      setMensaje(error.message);
+      setTipoMensaje('error');
+    } finally {
+        setCargando(false);
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -33,7 +69,7 @@ export default function App() {
           onChangeText={setEdad}
         />
 
-        <Pressable style={styles.boton}>
+        <Pressable style={styles.boton} onPress={handleRegistrar}>
           <Text style={styles.textoBoton}>
             Agregar Usuario
           </Text>

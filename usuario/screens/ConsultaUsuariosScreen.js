@@ -1,17 +1,31 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {SafeAreaView,View,Text,FlatList,StyleSheet,Pressable
 } from 'react-native';
-import {router} from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 //router permite usar las rutas
+
+import {obtenerUsuarios} from "../Services/usuariosServices";
+
 export default function ConsultaUsuariosScreen() {
 
-  const usuarios = [
-    { id: '1', nombre: 'Glenda Barrera', edad: 18 },
-    { id: '2', nombre: 'Tadeo Servin', edad: 19 },
-    { id: '3', nombre: 'Fermin Lopez', edad: 25 },
-    { id: '4', nombre: 'Frankie De Jong', edad: 21 },
-    { id: '5', nombre: 'Luisa Martínez', edad: 28 },
-  ];
+  const [usuarios, setUsuarios] = useState([]);
+  const [error, setError] = useState('');
+
+  useFocusEffect(
+    useCallback(() => {
+      const cargarUsuarios = async () => {
+        try {
+          const listaUsuarios = await obtenerUsuarios();
+          setUsuarios(listaUsuarios);
+          setError('');
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
+      cargarUsuarios();
+    }, [])
+  );
 
   const renderTarjeta = ({ item }) => (
       <Pressable

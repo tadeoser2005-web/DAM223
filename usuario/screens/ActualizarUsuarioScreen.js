@@ -1,20 +1,46 @@
 import React, { useState } from 'react';
-import { SafeAreaView,View,Text, TextInput, Pressable, StyleSheet,} from 'react-native';
-import {useLocalSearchParams} from "expo-router";
-
+import { SafeAreaView,View,Text, TextInput, Pressable, StyleSheet,ActivityIndicator} from 'react-native';
+import {router, useLocalSearchParams} from "expo-router";
+import {actualizarUsuario as actualizarUsuarioServicio} from "../Services/usuariosServices";
 
 export default function ActualizarUsuarioScreen() {
 
     const params = useLocalSearchParams(); //se viene desde detalle
 
-    const [nombre,setNombre] = useState(params.nombre);
-    const [edad,setEdad] = useState(params.edad);
-
-    const actualizarUsuario = () => {}
-
-
+    const [nombre,setNombre] = useState(String(params.nombre ?? ''));
+    const [edad,setEdad] = useState(String(params.edad ?? ''));
+    const [cargando,setCargando] = useState(false);
+    const [mensaje,setMensaje] = useState('');
 
 
+    const actualizarUsuario = async () => {
+        try {
+            setCargando(true);
+            setMensaje('');
+
+            const datosActualizados = {
+                nombre: nombre,
+                edad: edad
+            };
+            const usuarioActualizado = await actualizarUsuarioServicio(
+                params.id,
+                datosActualizados
+            );
+            router.replace({
+                pathname:'/detalle',
+                params: {
+                    id:usuarioActualizado.id,
+                    nombre:usuarioActualizado.nombre,
+                    edad:String(usuarioActualizado.edad)
+                }
+                }
+            );
+        } catch (error) {
+            setMensaje(error.message);
+        } finally {
+            setCargando(false);
+        }
+    }
 
 
 
@@ -50,13 +76,23 @@ export default function ActualizarUsuarioScreen() {
                     keyboardType="numeric"
                 />
 
+                {mensaje !== '' && (
+                    <Text style={styles.mensajeError}>
+                        {mensaje}
+                    </Text>
+                )}
+
                 <Pressable
                     style={styles.boton}
                     onPress={actualizarUsuario}
                 >
-                    <Text style={styles.textoBoton}>
-                        Guardar cambios
-                    </Text>
+                    {cargando ? (
+                        <ActivityIndicator size="small" color='#1f2937'/>
+                    ):(
+                        <Text style={styles.textoBoton}>
+                            Guardar cambios
+                        </Text>
+                    )}
                 </Pressable>
 
             </View>
@@ -117,5 +153,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-
+    mensajeError: {
+        color: 'red',
+        fontSize: 14,
+        marginBottom: 10,
+        textAlign: 'center',
+    },
 });

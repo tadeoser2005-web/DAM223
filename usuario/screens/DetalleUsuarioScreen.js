@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
-import { SafeAreaView,View,Text,StyleSheet,Pressable,Modal,} from 'react-native';
+import { SafeAreaView,View,Text,StyleSheet,Pressable,Modal,ActivityIndicator} from 'react-native';
 import {useLocalSearchParams,router} from "expo-router";
+import {eliminarUsuario} from "../Services/usuariosServices";
 
 export default function DetalleUsuarioScreen() {
 
 const {id,nombre,edad} = useLocalSearchParams();
 //vacia todos los parametros en este objeto
 
-    const actualizarUsuario = () => {
+    const handleActualizar = () => {
         router.push({pathname:'/actualiza',params:{id:id,nombre:nombre,edad:edad}});
     } //para la screen de actualiza manda estos parametros
 
 
     // Estado para mostrar u ocultar el modal
     const [modalVisible, setModalVisible] = useState(false);
-
+    const [eliminando,setEliminado] = useState(false);
 
     // Confirmar la eliminación
-    const confirmarEliminacion = () => {
-        console.log('Eliminar usuario:', id);
-        setModalVisible(false);
+    const confirmarEliminacion = async () => {
+        try {
+            await eliminarUsuario(id);
+            setEliminado(true);
+            setModalVisible(false);
+            router.replace('/consulta');
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+        } finally {
+            setModalVisible(false);
+        }
     };
 
 
@@ -63,7 +72,7 @@ const {id,nombre,edad} = useLocalSearchParams();
                     {/* BOTÓN ACTUALIZAR */}
                     <Pressable
                         style={styles.botonActualizar}
-                        onPress={actualizarUsuario}
+                        onPress={handleActualizar}
                     >
                         <Text style={styles.textoBotonActualizar}>
                             Actualizar
@@ -74,11 +83,16 @@ const {id,nombre,edad} = useLocalSearchParams();
                     {/* BOTÓN ELIMINAR */}
                     <Pressable
                         style={styles.botonEliminar}
-                        onPress={() => setModalVisible(true)}
+                        onPress={confirmarEliminacion}
+                        disabled={eliminando} //evita presionar dos veces
                     >
-                        <Text style={styles.textoBotonEliminar}>
-                            Eliminar
-                        </Text>
+                        {eliminando ? (
+                            <ActivityIndicator size="small" color='#ffffff'/>
+                        ): (
+                            <Text style={styles.textoConfirmar}>
+                                si, eliminar
+                            </Text>
+                        )}
                     </Pressable>
 
                 </View>
