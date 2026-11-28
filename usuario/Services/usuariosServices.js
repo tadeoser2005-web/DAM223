@@ -145,7 +145,7 @@ export const actualizarUsuario = async (id,datosActualizados) => {
 
 
     //guardamos el nuevo arreglo en localStorage
-    await guardar(KEY_USUARIOS,usuarioActualizado);
+    await guardar(KEY_USUARIOS,usuariosActualizados);
 
     //devolvemos el usuario q fue actualizado
     return usuarioActualizado;
